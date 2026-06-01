@@ -3,7 +3,7 @@
 A premium, dynamic blogging platform built with React, Node.js, Express, and PostgreSQL.
 
 ## Live Demo
-🌍 **[View Live Website](https://your-blog-platform-url.vercel.app)** *(Note: Replace this URL once deployed to Vercel)*
+🌍 **[View Live Website](https://blog-plat-form-two.vercel.app)**
 
 ## Features
 - 🔐 **Secure Authentication**: Full JWT-based user registration and login flow.
