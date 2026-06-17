@@ -73,10 +73,25 @@ export async function proxy(request: NextRequest) {
   // Demo mode auth via cookie
   const demoSession = request.cookies.get(DEMO_SESSION_COOKIE)?.value;
 
-  if (!demoSession && !isPublic) {
-    return NextResponse.redirect(new URL("/login", request.url));
+  if (!demoSession) {
+    // Keep public pages (/, /login, /register) accessible without auto-login
+    if (pathname === "/" || pathname === "/login" || pathname === "/register") {
+      return NextResponse.next();
+    }
+
+    // Auto-login to farmer@demo.ap for any protected pages visited directly
+    const response = NextResponse.redirect(new URL("/dashboard", request.url));
+    response.cookies.set(DEMO_SESSION_COOKIE, "farmer@demo.ap", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 7,
+      path: "/",
+    });
+    return response;
   }
 
+  // If already logged in, redirect /login and /register to dashboard
   if (demoSession && (pathname === "/login" || pathname === "/register")) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }

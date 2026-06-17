@@ -14,10 +14,10 @@ export default function LandingPage() {
           </span>
         </div>
         <div className="flex gap-3">
-          <Link href="/login">
+          <Link href="/api/auth/demo-login">
             <Button variant="ghost">Login</Button>
           </Link>
-          <Link href="/register">
+          <Link href="/api/auth/demo-login">
             <Button>Get Started</Button>
           </Link>
         </div>
@@ -37,12 +37,12 @@ export default function LandingPage() {
               weather alerts, and direct selling — all in one place.
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
-              <Link href="/register">
+              <Link href="/api/auth/demo-login">
                 <Button size="lg">
                   Start free <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
-              <Link href="/login">
+              <Link href="/api/auth/demo-login">
                 <Button variant="outline" size="lg">
                   Demo login
                 </Button>
