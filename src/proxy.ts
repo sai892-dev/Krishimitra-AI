@@ -6,7 +6,7 @@ import { DEMO_SESSION_COOKIE } from "@/lib/auth/demo";
 const PUBLIC_PATHS = ["/", "/login", "/register"];
 const ADMIN_PATHS = ["/admin"];
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (
