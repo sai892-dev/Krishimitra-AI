@@ -66,7 +66,7 @@ export default function LoginPage() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="farmer@demo.ap"
+              placeholder="you@example.com"
               autoComplete="email"
             />
           </div>
@@ -90,9 +90,7 @@ export default function LoginPage() {
           </Button>
         </form>
 
-        <p className="mt-4 text-center text-sm text-stone-500">
-          Demo: farmer@demo.ap / buyer@demo.ap / admin@demo.ap — password: demo1234
-        </p>
+
         <p className="mt-2 text-center text-sm">
           No account?{" "}
           <Link href="/register" className="font-medium text-forest hover:underline">

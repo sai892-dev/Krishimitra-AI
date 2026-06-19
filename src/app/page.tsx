@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Sprout, ArrowRight, Cloud, Leaf, Store, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { isSupabaseConfigured } from "@/lib/utils";
 
 export default function LandingPage() {
   return (
@@ -44,15 +43,10 @@ export default function LandingPage() {
               </Link>
               <Link href="/login">
                 <Button variant="outline" size="lg">
-                  Demo login
+                  Login
                 </Button>
               </Link>
             </div>
-            {!isSupabaseConfigured() && (
-              <p className="mt-4 text-sm text-amber-700 bg-amber-50 inline-block px-3 py-1 rounded-lg">
-                Demo: farmer@demo.ap / demo1234
-              </p>
-            )}
           </div>
           <div className="grid grid-cols-2 gap-4">
             {[
