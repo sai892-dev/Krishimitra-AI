@@ -73,16 +73,6 @@ export async function proxy(request: NextRequest) {
   // Demo mode auth via cookie
   const demoSession = request.cookies.get(DEMO_SESSION_COOKIE)?.value;
 
-  // If they visit login or register, clear the demo session so they can authenticate/register fresh
-  if (pathname === "/login" || pathname === "/register") {
-    if (demoSession) {
-      const response = NextResponse.next();
-      response.cookies.delete(DEMO_SESSION_COOKIE);
-      return response;
-    }
-    return NextResponse.next();
-  }
-
   if (!demoSession && !isPublic) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
