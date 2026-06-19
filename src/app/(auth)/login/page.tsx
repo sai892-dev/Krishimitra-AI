@@ -57,6 +57,20 @@ export default function LoginPage() {
           <p className="text-sm text-stone-500">KrishiMitra AI · Andhra Pradesh</p>
         </div>
 
+        <div className="mb-4">
+          <Link href="/api/auth/demo-login" className="block w-full">
+            <Button variant="outline" className="w-full border-forest text-forest hover:bg-forest/5">
+              Instant Demo Login (Farmer)
+            </Button>
+          </Link>
+          <div className="relative my-4 flex items-center justify-center">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t border-stone-200" />
+            </div>
+            <span className="relative bg-white px-2 text-xs text-stone-400 uppercase">Or sign in with email</span>
+          </div>
+        </div>
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <Label htmlFor="email" required>

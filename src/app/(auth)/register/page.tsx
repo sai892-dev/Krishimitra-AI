@@ -78,6 +78,20 @@ export default function RegisterPage() {
           <p className="text-sm text-stone-500">Register as farmer or buyer in AP</p>
         </div>
 
+        <div className="mb-4">
+          <Link href="/api/auth/demo-login" className="block w-full">
+            <Button variant="outline" className="w-full border-forest text-forest hover:bg-forest/5">
+              Instant Demo Login (Farmer)
+            </Button>
+          </Link>
+          <div className="relative my-4 flex items-center justify-center">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t border-stone-200" />
+            </div>
+            <span className="relative bg-white px-2 text-xs text-stone-400 uppercase">Or register new account</span>
+          </div>
+        </div>
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="sm:col-span-2">

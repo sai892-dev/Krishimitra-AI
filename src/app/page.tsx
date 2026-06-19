@@ -56,19 +56,20 @@ export default function LandingPage() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             {[
-              { icon: Leaf, title: "Crop Health AI", te: "పంట వ్యాధి గుర్తింపు" },
-              { icon: Cloud, title: "Weather Intel", te: "వాతావరణ సమాచారం" },
-              { icon: Store, title: "Direct Market", te: "నేరుగా విక్రయం" },
-              { icon: MessageCircle, title: "AI Assistant", te: "AI సహాయకుడు" },
-            ].map(({ icon: Icon, title, te }) => (
-              <div
+              { icon: Leaf, title: "Crop Health AI", te: "పంట వ్యాధి గుర్తింపు", href: "/crop-health" },
+              { icon: Cloud, title: "Weather Intel", te: "వాతావరణ సమాచారం", href: "/dashboard" },
+              { icon: Store, title: "Direct Market", te: "నేరుగా విక్రయం", href: "/marketplace" },
+              { icon: MessageCircle, title: "AI Assistant", te: "AI సహాయకుడు", href: "/assistant" },
+            ].map(({ icon: Icon, title, te, href }) => (
+              <Link
                 key={title}
-                className="rounded-xl border border-stone-200 bg-white p-5 shadow-sm"
+                href={href}
+                className="block rounded-xl border border-stone-200 bg-white p-5 shadow-sm hover:border-forest hover:shadow-md transition-all cursor-pointer"
               >
                 <Icon className="h-8 w-8 text-forest" />
                 <p className="mt-3 font-semibold text-forest-dark">{title}</p>
                 <p className="text-sm text-stone-500">{te}</p>
-              </div>
+              </Link>
             ))}
           </div>
         </div>

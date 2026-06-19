@@ -80,7 +80,7 @@ export async function proxy(request: NextRequest) {
     }
 
     // Auto-login to farmer@demo.ap for any protected pages visited directly
-    const response = NextResponse.redirect(new URL("/dashboard", request.url));
+    const response = NextResponse.redirect(new URL(pathname, request.url));
     response.cookies.set(DEMO_SESSION_COOKIE, "farmer@demo.ap", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
