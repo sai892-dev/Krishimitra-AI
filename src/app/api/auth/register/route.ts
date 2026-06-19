@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { registerSchema } from "@/lib/validators/auth";
 import { DEMO_SESSION_COOKIE } from "@/lib/auth/demo";
-import { demoUsersRuntime } from "@/lib/auth/demo-store";
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/utils";
 
@@ -68,8 +67,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true });
   }
 
-  // Demo mode: store user and auto-login
-  demoUsersRuntime[data.email] = {
+  // Demo mode: store user in cookies and auto-login
+  const user = {
     id: `demo-${crypto.randomUUID().slice(0, 8)}`,
     role: data.role,
     full_name: data.full_name,
@@ -92,6 +91,14 @@ export async function POST(request: NextRequest) {
   };
 
   const cookieStore = await cookies();
+  cookieStore.set(`km_user_${encodeURIComponent(data.email)}`, JSON.stringify(user), {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 60 * 60 * 24 * 7,
+    path: "/",
+  });
+
   cookieStore.set(DEMO_SESSION_COOKIE, data.email, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
@@ -103,6 +110,6 @@ export async function POST(request: NextRequest) {
   return NextResponse.json({
     success: true,
     demo: true,
-    message: "Demo mode: use farmer@demo.ap / demo1234 for full demo data",
+    message: "Demo mode: user created and logged in",
   });
 }

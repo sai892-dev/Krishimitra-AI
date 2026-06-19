@@ -4,15 +4,41 @@ import { Card, Badge } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { getCurrentProfile } from "@/lib/auth/session";
 import { DEMO_LISTINGS } from "@/lib/data/seed";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, isSupabaseConfigured } from "@/lib/utils";
 import { Plus } from "lucide-react";
 import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { cookies } from "next/headers";
 
 export default async function MyListingsPage() {
   const profile = await getCurrentProfile();
   if (profile?.role === "buyer") redirect("/marketplace");
 
-  const myListings = DEMO_LISTINGS.filter((l) => l.farmer_id === profile?.id);
+  let listings = [];
+  if (isSupabaseConfigured()) {
+    const supabase = await createClient();
+    if (supabase) {
+      const { data } = await supabase
+        .from("crop_listings")
+        .select("*")
+        .order("created_at", { ascending: false });
+      listings = data || [];
+    }
+  } else {
+    const cookieStore = await cookies();
+    const cookieVal = cookieStore.get("km_listings")?.value;
+    let customListings = [];
+    if (cookieVal) {
+      try {
+        customListings = JSON.parse(cookieVal);
+      } catch {
+        customListings = [];
+      }
+    }
+    listings = [...customListings, ...DEMO_LISTINGS];
+  }
+
+  const myListings = listings.filter((l) => l.farmer_id === profile?.id);
 
   return (
     <div>

@@ -77,6 +77,34 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
+  if (demoSession) {
+    if (pathname === "/login" || pathname === "/register") {
+      return NextResponse.redirect(new URL("/dashboard", request.url));
+    }
+
+    if (ADMIN_PATHS.some((p) => pathname.startsWith(p))) {
+      const email = demoSession;
+      const cookieVal = request.cookies.get(`km_user_${encodeURIComponent(email)}`)?.value;
+      let role = "farmer";
+      if (cookieVal) {
+        try {
+          const u = JSON.parse(cookieVal);
+          role = u.role;
+        } catch {}
+      } else {
+        if (email === "admin@demo.ap") {
+          role = "admin";
+        } else if (email === "buyer@demo.ap") {
+          role = "buyer";
+        }
+      }
+
+      if (role !== "admin") {
+        return NextResponse.redirect(new URL("/dashboard", request.url));
+      }
+    }
+  }
+
   return NextResponse.next();
 }
 

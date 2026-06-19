@@ -46,9 +46,21 @@ export default function NewListingPage() {
     }
 
     setLoading(true);
-    // Demo: simulate success — in production, POST to Supabase
-    await new Promise((r) => setTimeout(r, 800));
-    router.push("/marketplace");
+    try {
+      const res = await fetch("/api/marketplace/listings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(parsed.data),
+      });
+      const resData = await res.json();
+      if (!res.ok) {
+        throw new Error(resData.error || "Failed to post listing");
+      }
+      window.location.href = "/marketplace";
+    } catch (err: any) {
+      setError(err.message || "Failed to post listing");
+      setLoading(false);
+    }
   }
 
   return (

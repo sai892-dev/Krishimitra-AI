@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true });
   }
 
-  const user = getDemoUserByEmail(email);
+  const user = await getDemoUserByEmail(email);
   if (!user || user.password !== password) {
     return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
   }

@@ -1,15 +1,41 @@
 import { getCurrentProfile } from "@/lib/auth/session";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Card, Badge } from "@/components/ui/Card";
-import { DEMO_USERS } from "@/lib/data/seed";
 import { AP_CROPS } from "@/lib/constants/ap";
 import { LANGUAGES_LIST } from "@/lib/i18n/translations";
+import { getCurrentDemoUser } from "@/lib/auth/demo";
+import { isSupabaseConfigured } from "@/lib/utils";
+import { createClient } from "@/lib/supabase/server";
 
 export default async function ProfilePage() {
   const profile = await getCurrentProfile();
-  const demoUser = profile
-    ? Object.values(DEMO_USERS).find((u) => u.id === profile.id)
-    : null;
+  
+  let farmerDetails = null;
+  if (profile) {
+    if (isSupabaseConfigured()) {
+      const supabase = await createClient();
+      if (supabase) {
+        const { data } = await supabase
+          .from("farmer_profiles")
+          .select("*")
+          .eq("user_id", profile.id)
+          .single();
+        if (data) {
+          farmerDetails = {
+            land_size_acres: data.land_size_acres,
+            primary_crops: data.primary_crops || [],
+            village: data.village || "",
+            mandal: data.mandal || "",
+          };
+        }
+      }
+    } else {
+      const demoUser = await getCurrentDemoUser();
+      if (demoUser?.farmer) {
+        farmerDetails = demoUser.farmer;
+      }
+    }
+  }
 
   return (
     <div className="max-w-2xl">
@@ -46,22 +72,22 @@ export default async function ProfilePage() {
             <dt className="text-xs text-stone-500 uppercase">Phone</dt>
             <dd className="font-medium">{profile?.phone ?? "—"}</dd>
           </div>
-          {demoUser?.farmer && (
+          {profile?.role === "farmer" && farmerDetails && (
             <>
               <div>
                 <dt className="text-xs text-stone-500 uppercase">Land size</dt>
-                <dd className="font-medium">{demoUser.farmer.land_size_acres} acres</dd>
+                <dd className="font-medium">{farmerDetails.land_size_acres} acres</dd>
               </div>
               <div>
                 <dt className="text-xs text-stone-500 uppercase">Village / Mandal</dt>
                 <dd className="font-medium">
-                  {demoUser.farmer.village}, {demoUser.farmer.mandal}
+                  {farmerDetails.village || "—"}{farmerDetails.mandal ? `, ${farmerDetails.mandal}` : ""}
                 </dd>
               </div>
               <div className="sm:col-span-2">
                 <dt className="text-xs text-stone-500 uppercase mb-1">Primary crops</dt>
                 <dd className="flex flex-wrap gap-2">
-                  {demoUser.farmer.primary_crops.map((c) => {
+                  {farmerDetails.primary_crops.map((c: string) => {
                     const crop = AP_CROPS.find((ac) => ac.value === c);
                     return (
                       <Badge key={c}>

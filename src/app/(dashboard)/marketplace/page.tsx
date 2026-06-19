@@ -1,34 +1,52 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { PageHeader, EmptyState } from "@/components/layout/PageHeader";
 import { Card, Badge } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Textarea, Input, Label } from "@/components/ui/Input";
-import { DEMO_LISTINGS } from "@/lib/data/seed";
 import { useLanguage } from "@/context/LanguageContext";
 import { t } from "@/lib/i18n/translations";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { inquirySchema } from "@/lib/validators/marketplace";
-import { Phone, Plus } from "lucide-react";
+import { Phone, Plus, Loader2 } from "lucide-react";
+import type { CropListing } from "@/types";
 
 export default function MarketplacePage() {
   const { language } = useLanguage();
+  const [listings, setListings] = useState<CropListing[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [district, setDistrict] = useState("all");
   const [inquiryFor, setInquiryFor] = useState<string | null>(null);
   const [message, setMessage] = useState("");
   const [phone, setPhone] = useState("");
   const [sent, setSent] = useState(false);
 
-  const listings =
-    district === "all"
-      ? DEMO_LISTINGS.filter((l) => l.status === "active")
-      : DEMO_LISTINGS.filter(
-          (l) => l.status === "active" && l.district === district
-        );
+  useEffect(() => {
+    async function fetchListings() {
+      try {
+        const res = await fetch("/api/marketplace/listings");
+        if (!res.ok) throw new Error("Failed to fetch listings");
+        const data = await res.json();
+        setListings(data);
+      } catch (err: any) {
+        setError(err.message || "Failed to load listings");
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchListings();
+  }, []);
 
-  const districts = [...new Set(DEMO_LISTINGS.map((l) => l.district).filter(Boolean))];
+  const filteredListings = listings.filter((l) => {
+    if (l.status !== "active") return false;
+    if (district === "all") return true;
+    return l.district === district;
+  });
+
+  const districts = [...new Set(listings.map((l) => l.district).filter(Boolean))];
 
   async function sendInquiry(listingId: string) {
     const parsed = inquirySchema.safeParse({
@@ -85,14 +103,22 @@ export default function MarketplacePage() {
         ))}
       </div>
 
-      {listings.length === 0 ? (
+      {loading ? (
+        <div className="flex justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-forest" />
+        </div>
+      ) : error ? (
+        <div className="rounded-lg bg-red-50 border border-red-200 p-4 text-sm text-red-800">
+          {error}
+        </div>
+      ) : filteredListings.length === 0 ? (
         <EmptyState
           title={t(language, "noData")}
           description="No active listings in this district"
         />
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {listings.map((listing) => (
+          {filteredListings.map((listing) => (
             <Card key={listing.id}>
               <div className="flex justify-between items-start">
                 <h3 className="font-semibold text-forest-dark">{listing.crop_name}</h3>

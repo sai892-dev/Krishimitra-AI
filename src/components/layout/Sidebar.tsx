@@ -109,7 +109,7 @@ export function MobileNav({ role }: { role: UserRole }) {
   const pathname = usePathname();
   const { language } = useLanguage();
 
-  const mobileItems = navItems.slice(0, 5);
+  const mobileItems = navItems.slice(0, 4);
 
   return (
     <nav
@@ -132,6 +132,15 @@ export function MobileNav({ role }: { role: UserRole }) {
           </Link>
         );
       })}
+      <form action="/api/auth/logout" method="POST" className="flex flex-1">
+        <button
+          type="submit"
+          className="flex flex-1 flex-col items-center gap-0.5 py-2 text-xs text-red-500 hover:text-red-700 active:bg-red-50"
+        >
+          <LogOut className="h-5 w-5" aria-hidden />
+          <span className="truncate px-1">{t(language, "logout")}</span>
+        </button>
+      </form>
     </nav>
   );
 }
